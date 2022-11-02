@@ -1,0 +1,268 @@
+<!doctype html>
+<style>
+
+    #left{
+      border-radius: 15px;
+    background: #915c97;
+    padding: 20px;
+    overflow-y: auto;
+    overflow-x:hidden;
+    width: 40%;
+    height: 80vh;
+    margin-left: auto; 
+    margin-right: 0;
+    }
+    *::-webkit-scrollbar {
+  width: 8px;
+}
+  #headleft{
+    display:table;
+    border-radius: 50px;
+    background: #58385c;
+    padding: 20px;
+    width:40%;
+    margin-bottom:20px;
+    height: 2vh;
+    margin-left: auto; 
+    margin-right: 0;
+  }
+  #settings{
+    position : absolute;
+    border-radius: 30px;
+    background: #6d6c6d;
+    padding: 20px;
+    width:fit-content;
+    margin-bottom:20px;
+    margin-right: 0;
+  }
+  #ln {display:inline-block;} 
+
+  span {
+    position: relative;
+    top: -60%;
+
+  font-size: 40px;
+}
+#button3 {background-color: #8c342e;}
+#tweet{
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: table;
+  margin-bottom:20px;
+  background: #877a7a;
+  height:200px;
+  border-radius: 15px;
+  width:100%;
+  max-width: 100%;
+
+}
+*::-webkit-scrollbar-track {
+  background: rgb(85, 85, 85);
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 0, 0);
+  border-radius: 50px;
+  border: 3px rgb(85, 85, 85);
+}
+    #helper{
+      position:relative;
+      height:50px;
+      top:50%;
+      border:dotted 1px #000000;
+    }
+    
+    #centered{
+      position:relative;
+      height:50px;
+      top:-50%;
+      border:solid 1px #111111;
+    }
+    .disableScroll{
+      overflow-y:hidden;
+      overflow-x:hidden;
+}
+  #btmbtn{
+    position: relative;
+    display: table-cell; 
+    vertical-align: bottom;
+  }
+  #twtxt{
+    padding: 2%;
+    font-family: 'Courier New', monospace;
+    font-size: larger;
+    overflow-wrap: break-word;
+  }
+    
+    </style>
+<html lang="en">
+  <link rel="stylesheet" href="styles.css">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+
+    <title>Twitter Monitor</title>
+</head>
+<body class="disableScroll" style="background-color: #111111;">
+
+
+<div id="settings">
+  <div>
+    <button id="button3" onclick="window.open('alo.html', '_blank');">Auto Link Opener</button>
+
+  
+  </div>
+</div>
+<div id="headleft">
+
+  <span id='spas' style=" display:table-cell;vertical-align:middle;position:relative;top:3%">Tweets by Techno</span>
+</div>
+<div id="left">
+    
+</div>
+<audio id="audio">
+  <source src="sound.mp3" type="audio/mp3">
+</audio>
+<script>
+
+  /*    <label style="font-size: larger; position:relative;top:6px;">Auto Link Opener</label>
+  <label class="switch">
+    <input type="checkbox" id="alo">
+    <span class="slider round"></span>
+  </label>*/
+const getClickableLink = link => {
+    return link.startsWith("http://") || link.startsWith("https://") ?
+      link
+      : `http://${link}`;
+  };
+function linkify(inputText) {
+    var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+    //URLs starting with http://, https://, or ftp://
+    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+    replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+    //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+    replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+    //Change email addresses to mailto:: links.
+    replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+    replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+
+    return replacedText;
+}
+function tweet(name, url, text, link, pfp, img){
+  var tw = document.createElement("DIV");
+  tw.id =  "tweet"
+  var buttons = document.createElement("DIV");
+  buttons.style="display: table; text-align: right;"
+  var i = document.createElement("IMG");
+  i.style="width:48px;height:48px;padding:2%;border-radius: 50%;"
+  i.src = pfp
+  i.id='ln'
+  tw.appendChild(i);
+
+  var z = document.createElement("h2");
+  z.innerHTML=name
+  z.id='ln'
+  z.style = "position:relative;top:-30px"
+  tw.appendChild(z);
+
+  var z = document.createElement("P");
+  z.id = "twtxt"
+  z.innerHTML=linkify(text.replace(/\n/g, '<br />'));
+  tw.appendChild(z);
+  for(var i = 0; i < img.length; i++){
+    var b = document.createElement("img");
+    b.setAttribute('src', img[i])
+    b.style="padding:2%;display:inline-block;height: auto;max-width:96%;"
+    tw.appendChild(b);
+
+
+  }
+  if (link.length > 0){
+    var z = document.createElement("P");
+    z.innerHTML="LINKS"
+    tw.appendChild(z);
+  }
+
+  for(var i = 0; i < link.length; i++){
+    var b = document.createElement("A");
+    b.setAttribute("href", link[i])
+    b.setAttribute("target", "_blank")
+    b.style="padding:2%;"
+    b.innerHTML = link[i]+'<br>'
+    tw.appendChild(b);
+  }
+
+
+  var btn = document.createElement("button")
+  btn.setAttribute('onclick', "window.open('"+url+"', '_blank');")
+  btn.id="btmbtn"
+  btn.innerHTML="Tweet"
+  buttons.appendChild(btn)
+  tw.appendChild(buttons);
+               // Insert text
+   document.getElementById("left").prepend(tw); 
+}
+
+
+function ttwo (ocr, ocrLinks){
+  if (ocr.length > 0){
+    var tw = document.createElement("DIV");
+    tw.id =  "tweet"
+    var z = document.createElement("h2");
+    z.innerHTML="OCR"
+    z.id='ln'
+    z.style = "position:relative;padding:2%;"
+    tw.appendChild(z);
+
+    for (var i = 0; i < ocr.length; i++){
+      var z = document.createElement("P");
+      z.id = "twtxt"
+      z.innerHTML=ocr[i].replace(/\n/g, '<br />') + '<br />';
+      tw.appendChild(z);
+    }
+
+  
+  for(var i = 0; i < ocrLinks.length; i++){
+    var b = document.createElement("A");
+    b.setAttribute("href", ocrLinks[i])
+    b.setAttribute("target", "_blank")
+    b.style="padding:2%;"
+    b.innerHTML = ocrLinks[i]+'<br>'
+    tw.appendChild(b);
+  }
+  document.getElementById("left").prepend(tw); 
+  }
+  
+}
+var ws;
+var data;
+function init() {
+    ws = new WebSocket('ws://localhost:13254');
+    ws.onopen = () => {console.log('Connected to The Monitor!');
+    document.getElementById('spas').innerHTML += ' - Online'
+  }
+    ws.onmessage = function(message) {
+      console.log(JSON.stringify(message.data))
+        data = JSON.parse(message.data)
+        document.getElementById("audio").play();
+        try {tweet(data.name, data.url, data.text, data.link, data.pfp, data.img)}
+        catch(error){ttwo (data.ocr, data.ocrlink)}
+
+    }}
+document.addEventListener('DOMContentLoaded', function() {
+init()
+})
+
+
+</script>
+
+</body>
+</html>

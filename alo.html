@@ -1,0 +1,67 @@
+<!doctype html>
+
+<html lang="eng">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        
+    
+        <title>Link Opener</title>
+    </head>
+
+<body style="background-color: #111111;">
+
+
+
+
+
+</body>
+<script>
+
+const getClickableLink = link => {
+    return link.startsWith("http://") || link.startsWith("https://") ?
+      link
+      : `http://${link}`;
+  };
+
+function alo(links){
+
+for(var i = 0; i < links.length; i++){
+
+    var win = window.open(getClickableLink(links[i]), '_blank');
+    win.focus();
+}
+
+
+}
+
+var ws;
+var data;
+function init() {
+    ws = new WebSocket('ws://localhost:13254');
+    ws.onopen = () => {console.log('Connected to The Monitor!');
+  }
+    ws.onmessage = function(message) {
+      console.log(JSON.stringify(message.data))
+        data = JSON.parse(message.data)
+        try {
+          alo(data.link)
+        
+        }
+        catch(error){
+          
+          console.log(error)
+          alo (data.ocrlink)
+        
+        }
+
+    }}
+document.addEventListener('DOMContentLoaded', function() {
+init()
+})
+
+</script>
+</html>
